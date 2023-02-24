@@ -13,10 +13,10 @@ void checkData(MYSQL* connection);
 
 int main()
 {
-    MYSQL* conn = mysql_init(NULL);
-    if (!mysql_real_connect(conn, "localhost", "root", "password", "mydb", 3306, NULL, 0))
+    MYSQL* connection = mysql_init(NULL);
+    if (!mysql_real_connect(connection, "localhost", "root", "password", "mydb", 3306, NULL, 0))
     {
-        std::cout << "Error connecting to database: " << mysql_error(conn) << std::endl;
+        std::cout << "Error connecting to database: " << mysql_error(connection) << std::endl;
         return 1;
     }
 
@@ -33,16 +33,16 @@ int main()
 
         switch (choice) {
         case 1:
-            enterData(conn);
+            enterData(connection);
             break;
         case 2:
-            eraseData(conn);
+            eraseData(connection);
             break;
         case 3:
-            updateData(conn);
+            updateData(connection);
             break;
         case 4:
-            checkData(conn);
+            checkData(connection);
             break;
         case 5:
             std::cout << "Goodbye!" << std::endl;
@@ -53,7 +53,7 @@ int main()
         }
     } while (choice != 5);
 
-    mysql_close(conn);
+    mysql_close(connection);
 
     return 0;
 }
@@ -69,22 +69,53 @@ void enterData(MYSQL* connection)
 
     // insert data into table
     std::string query = "INSERT INTO mytable (name, email) VALUES ('" + name + "', '" + email + "')";
-    if (mysql_query(connection, query.c_str())) {
+    if (mysql_query(connection, query.c_str()))
+    {
         std::cout << "Error entering data: " << mysql_error(connection) << std::endl;
     }
-    else {
+    else
+    {
         std::cout << "Data entered successfully." << std::endl;
     }
 }
 
 void eraseData(MYSQL* connection)
 {
+    std::string name;
+    std::cout << "Enter name: ";
+    std::cin >> name;
 
+    // delete data from table
+    std::string query = "DELETE FROM mytable WHERE name = '" + name + "'";
+    if (mysql_query(connection, query.c_str())) 
+    {
+        std::cout << "Error erasing data: " << mysql_error(connection) << std::endl;
+    }
+    else 
+    {
+        std::cout << "Data erased successfully." << std::endl;
+    }
 }
+
 
 void updateData(MYSQL* connection)
 {
+    std::string name, email;
+    std::cout << "Enter name: ";
+    std::cin >> name;
+    std::cout << "Enter new email: ";
+    std::cin >> email;
 
+    // update data in table
+    std::string query = "UPDATE mytable SET email = '" + email + "' WHERE name = '" + name + "'";
+    if (mysql_query(connection, query.c_str()))
+    {
+        std::cout << "Error updating data: " << mysql_error(connection) << std::endl;
+    }
+    else 
+    {
+        std::cout << "Data updated successfully." << std::endl;
+    }
 }
 
 void checkData(MYSQL* connection)
