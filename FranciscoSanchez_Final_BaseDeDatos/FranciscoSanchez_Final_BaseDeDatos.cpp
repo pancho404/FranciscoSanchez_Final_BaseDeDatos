@@ -8,7 +8,7 @@ enum class actions { ADD=1, UPDATE, CHECK, REMOVE};
 void enterData(MYSQL* connection);
 void eraseData(MYSQL* connection);
 void updateData(MYSQL* connection);
-void checkData(MYSQL* connection);
+std::string checkData(MYSQL* connection, std::string& name);
 
 
 int main()
@@ -42,7 +42,7 @@ int main()
             updateData(connection);
             break;
         case 4:
-            checkData(connection);
+            checkData(connection,);
             break;
         case 5:
             std::cout << "Goodbye!" << std::endl;
@@ -81,17 +81,28 @@ void enterData(MYSQL* connection)
 
 void eraseData(MYSQL* connection)
 {
-    std::string name;
+    std::string name, email;
     std::cout << "Enter name: ";
     std::cin >> name;
+    std::cout << "Enter email: ";
+    std::cin >> email;
 
-    // delete data from table
     std::string query = "DELETE FROM mytable WHERE name = '" + name + "'";
     if (mysql_query(connection, query.c_str())) 
     {
         std::cout << "Error erasing data: " << mysql_error(connection) << std::endl;
     }
     else 
+    {
+        std::cout << "Data erased successfully." << std::endl;
+    }
+
+    std::string secondQuery = "DELETE FROM mytable WHERE email = '" + email + "'";
+    if (mysql_query(connection, secondQuery.c_str()))
+    {
+        std::cout << "Error erasing data: " << mysql_error(connection) << std::endl;
+    }
+    else
     {
         std::cout << "Data erased successfully." << std::endl;
     }
@@ -106,7 +117,6 @@ void updateData(MYSQL* connection)
     std::cout << "Enter new email: ";
     std::cin >> email;
 
-    // update data in table
     std::string query = "UPDATE mytable SET email = '" + email + "' WHERE name = '" + name + "'";
     if (mysql_query(connection, query.c_str()))
     {
@@ -118,7 +128,33 @@ void updateData(MYSQL* connection)
     }
 }
 
-void checkData(MYSQL* connection)
+std::string checkData(MYSQL* connection, std::string& name)
 {
+
+    std::string query = "SELECT * FROM mytable WHERE name = '" + name + "'";
+    if (mysql_query(connection, query.c_str()) != 0)
+    {
+        std::cout << "Error selecting from database: " << mysql_error(connection) << std::endl;
+        return "";
+    }
+
+    MYSQL_RES* result = mysql_store_result(connection);
+    if (result == NULL)
+    {
+        std::cout << "Error storing result: " << mysql_error(connection) << std::endl;
+        return "";
+    }
+
+    MYSQL_ROW row = mysql_fetch_row(result);
+    if (row == NULL)
+    {
+        std::cout << "Data not found in database." << std::endl;
+        return "";
+    }
+
+    std::string data = row[1];
+
+    mysql_free_result(result);
+    return data;
 
 }
