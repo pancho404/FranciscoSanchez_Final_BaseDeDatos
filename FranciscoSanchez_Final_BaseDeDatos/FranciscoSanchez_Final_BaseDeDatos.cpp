@@ -2,8 +2,6 @@
 #include <string>
 #include <mysql.h>
 
-enum class actions { ADD=1, UPDATE, CHECK, REMOVE};
-
 
 void enterData(MYSQL* connection);
 void eraseData(MYSQL* connection);
@@ -18,7 +16,7 @@ int main()
     std::string name, email;
 
     MYSQL* connection = mysql_init(NULL);
-    if (!mysql_real_connect(connection, "localhost", "root", "password", "mydb", 3306, NULL, 0))
+    if (!mysql_real_connect(connection, "localhost", "root", "password", "Final", 3306, NULL, 0))
     {
         std::cout << "Error connecting to database: " << mysql_error(connection) << std::endl;
         return 1;
