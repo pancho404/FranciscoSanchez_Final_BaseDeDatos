@@ -61,7 +61,20 @@ int main()
 
 void enterData(MYSQL* connection)
 {
+    std::string name, email;
+    std::cout << "Enter name: ";
+    std::cin >> name;
+    std::cout << "Enter email: ";
+    std::cin >> email;
 
+    // insert data into table
+    std::string query = "INSERT INTO mytable (name, email) VALUES ('" + name + "', '" + email + "')";
+    if (mysql_query(connection, query.c_str())) {
+        std::cout << "Error entering data: " << mysql_error(connection) << std::endl;
+    }
+    else {
+        std::cout << "Data entered successfully." << std::endl;
+    }
 }
 
 void eraseData(MYSQL* connection)
